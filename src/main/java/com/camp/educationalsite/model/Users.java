@@ -9,16 +9,18 @@ import javax.validation.constraints.Size;
 @Entity
 public class Users {
     @Id
+    @Size(min = 3,message = "Minimum length for username is 3")
     String username;
 
-    @NotBlank
+    //@NotBlank
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8,}$",message = "Pass should have minimum eight characters and at least one uppercase letter, one lowercase letter, one number and one special character")
     String password;
 
     @Pattern(regexp="^(ADMIN|FACULTY)$",message="invalid code")
     String role;
 
     @NotBlank
-    @Size(min = 3)
+    @Size(min = 3,message = "Minimum length for name is 3")
     String name;
 
     @NotBlank

@@ -26,7 +26,7 @@ public class Notice {
     String title;
 
     @NotBlank
-    @Size(min = 3,message = "Title should be more then 2 characters long")
+    @Size(min = 3,message = "Body should be more then 2 characters long")
     String body;
 
     LocalDate date = LocalDateTime.now().toLocalDate();

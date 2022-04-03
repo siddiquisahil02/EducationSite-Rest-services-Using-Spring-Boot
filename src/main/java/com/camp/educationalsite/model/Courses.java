@@ -14,10 +14,11 @@ public class Courses {
 
 
     @Id
+    @Size(min = 3,message = "Course ID should be more than 2 characters long")
     String cID;
 
     @NotBlank
-    @Size(min = 3,message = "Name should be more then 2 characters long")
+    @Size(min = 3,message = "Name should be more than 2 characters long")
     String name;
 
     @Min(0)

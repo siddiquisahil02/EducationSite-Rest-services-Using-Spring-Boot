@@ -23,7 +23,7 @@ public class CustomAccesDenied implements AccessDeniedHandler{
                 response.addHeader("Content-Type", "application/json");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 PrintWriter writer = response.getWriter();
-                ObjectNode node = new ObjectMapper().readValue("{\"error\":\"403\", \"message\":\"You don't have the permissions to access this resource.\"}",ObjectNode.class);
+                ObjectNode node = new ObjectMapper().readValue("{\"code\":\"403\", \"message\":\"You don't have the permissions to access this resource.\"}",ObjectNode.class);
                 writer.print(node);
         
     }

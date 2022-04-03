@@ -16,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true,securedEnabled = true)
 public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -28,14 +28,6 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailService userDetailService;
 
-    // @Autowired
-    // private CustomAuthenticationProvider authProvider;
-
-    // @Autowired
-    // public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception{
-    //     auth.authenticationProvider(authProvider);
-    // }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
@@ -46,9 +38,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
         http
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/users/**").permitAll()
-        // .antMatchers("/students**").hasRole("ADMIN")
-        // .antMatchers("/courses**").hasRole("FACULTY")
+        .antMatchers("/students/public/**","/courses/public/**","/notice/public/**").permitAll()
         .anyRequest()
         .authenticated()
         .and()
@@ -59,11 +49,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
         .exceptionHandling()
         .accessDeniedHandler(customAccesDenied)
-        .authenticationEntryPoint(entryPoint)
-        .and()
-        .headers()
-        .frameOptions()
-        .disable();;
+        .authenticationEntryPoint(entryPoint);
     }
 
     @Bean

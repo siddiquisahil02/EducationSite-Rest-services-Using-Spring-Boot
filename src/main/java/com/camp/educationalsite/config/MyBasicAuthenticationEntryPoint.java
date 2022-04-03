@@ -23,7 +23,7 @@ public class MyBasicAuthenticationEntryPoint implements AuthenticationEntryPoint
                 response.addHeader("Content-Type", "application/json");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 PrintWriter writer = response.getWriter();
-                ObjectNode node = new ObjectMapper().readValue("{\"error\":\"401\", \"message\":\"You are not authorised to access this resource.\"}",ObjectNode.class);
+                ObjectNode node = new ObjectMapper().readValue("{\"code\":\"401\", \"message\":\"You are not authorised to access this resource.\"}",ObjectNode.class);
                 writer.print(node);
     }
 }

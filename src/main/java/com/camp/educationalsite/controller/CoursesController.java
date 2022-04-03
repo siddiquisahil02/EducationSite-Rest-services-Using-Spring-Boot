@@ -31,13 +31,12 @@ public class CoursesController {
     @Autowired
     private ObjectMapper mapper;
     
-    @PreAuthorize("hasAuthority('FACULTY')")
-    @GetMapping("/all")
+    @GetMapping("/public/all")
     public List<Courses> getAllCourses(){
         return this.service.getAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/public/{id}")
     public ResponseEntity<ObjectNode> getACourses(@PathVariable("id") String id){
         Courses course =  this.service.getACourse(id);
         if(course==null){
@@ -50,6 +49,7 @@ public class CoursesController {
 		return new ResponseEntity<ObjectNode>(objectNode,HttpStatus.OK);
     }
     
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ObjectNode> add( @Valid @RequestBody Courses courses){
         this.service.add(courses);
@@ -59,6 +59,7 @@ public class CoursesController {
         return new ResponseEntity<ObjectNode>(node,HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ObjectNode> del(@PathVariable("id") String cID){
         ObjectNode objectNode = mapper.createObjectNode();
@@ -74,4 +75,5 @@ public class CoursesController {
 		}
     }
     
+    //TO-DO: Generate a Update course method - @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('FACULTY')")
 }

@@ -26,6 +26,10 @@ public class ExamScheduleService {
         return this.repo.findById(id).orElse(null);
     }
 
+    public ExamSchedule getTheLatestOne(){
+        return this.repo.findTopByOrderByIdDesc();
+    }
+
     public void deleteRecord(int id){
         this.repo.deleteById(id);
     }

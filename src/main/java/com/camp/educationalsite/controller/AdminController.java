@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,11 +31,19 @@ public class AdminController {
     @Autowired
     private UploadAttachments controller;
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('FACULTY')")
     @GetMapping("/all")
     public List<ExamSchedule> getAllHandler(){
         return this.service.getAll();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('FACULTY')")
+    @GetMapping("/latest")
+    public ExamSchedule getLatestHandler(){
+        return this.service.getTheLatestOne();
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('FACULTY')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getOneHandler(@PathVariable("id") int id){
         ExamSchedule es =  this.service.getOne(id);
@@ -47,7 +56,7 @@ public class AdminController {
 		return new ResponseEntity<ExamSchedule>(es,HttpStatus.OK);
     }
     
-    
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<?> uploadExamSchedule(@RequestParam(value = "title",required = true) String title, @RequestParam(value = "file",required = true) MultipartFile file){
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
@@ -73,6 +82,7 @@ public class AdminController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ObjectNode> del(@PathVariable("id") int id){
         ObjectNode objectNode = new ObjectMapper().createObjectNode();

@@ -57,7 +57,7 @@ public class StudentController {
     @Autowired
     private UploadAttachments controller;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('FACULTY')")
     @GetMapping("/all")
     public List<ObjectNode> getAllStudents(){
         List<ObjectNode> data = new ArrayList<>();
@@ -87,7 +87,7 @@ public class StudentController {
         return data;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/public/{id}")
     public ResponseEntity<ObjectNode> getAStudent(@PathVariable("id") int id){
         Student s = this.service.getOne(id);
         ObjectNode temp = mapper.createObjectNode();
@@ -96,6 +96,11 @@ public class StudentController {
             temp.put("name",s.getName());
             temp.put("batchNo",s.getBatchNo());
             temp.put("hallticketURL",s.getHallticketURL()); 
+            ExamSchedule e = this.examRepo.findTopByOrderByIdDesc();
+            if(e!=null)
+                temp.put("examSchedule",e.getUrl());
+            else
+                temp.set("examSchedule",null);
             List<Courses> courseList = new ArrayList<>();
             s.getCourses().forEach((t)->{
             Courses c = this.coursesService.getACourse(t);
@@ -112,7 +117,7 @@ public class StudentController {
 		return new ResponseEntity<ObjectNode>(temp,HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/timetable/{id}")
+    @GetMapping("/public/timetable/{id}")
     public ResponseEntity<ObjectNode> getTimeTable(@PathVariable("id") int id){
         Student s = this.service.getOne(id);
         ObjectNode temp = mapper.createObjectNode();
@@ -154,6 +159,7 @@ public class StudentController {
 		return new ResponseEntity<ObjectNode>(temp,HttpStatus.NOT_FOUND);
     }
     
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ObjectNode> add(@Valid @RequestBody Student student){
         Set<String> courses = student.getCourses();
@@ -171,11 +177,10 @@ public class StudentController {
         return new ResponseEntity<ObjectNode>(node,HttpStatus.OK);
     }
 
-    @PutMapping("/addCourse/{id}")
+    @PutMapping("/public/addCourse/{id}")
     public ResponseEntity<ObjectNode> addCourse(@PathVariable("id") int sID,@Valid @RequestBody AddCourse body){
         ObjectNode node = mapper.createObjectNode();
         String course = body.getCourse();
-        System.out.println(course);
         Student s = this.service.getOne(sID);
         if(s!=null){
             Courses c = this.coursesService.getACourse(course);
@@ -197,6 +202,7 @@ public class StudentController {
         return new ResponseEntity<ObjectNode>(node,HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ObjectNode> del(@PathVariable("id") int id){
         ObjectNode objectNode = mapper.createObjectNode();
@@ -212,10 +218,17 @@ public class StudentController {
 		}
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('FACULTY')")
     @PutMapping("/uploadHallTicket/{id}")
     public ResponseEntity<?> uploadHalticket(@PathVariable("id") int id, @RequestParam(value = "file",required = true) MultipartFile file){
         ObjectNode objectNode = mapper.createObjectNode();
         try {
+            Student s = this.service.getOne(id);
+            if(s==null){
+                objectNode.put("code",404);
+                objectNode.put("message","No Record found");
+                return new ResponseEntity<ObjectNode>(objectNode,HttpStatus.NOT_FOUND);
+            }
             ObjectNode node =  this.controller.addHallTicket(file.getOriginalFilename(), file);
             
             String url = node.get("url").asText();
@@ -228,8 +241,8 @@ public class StudentController {
             objectNode.put("message","HallTicket Added succesfully.");
             return new ResponseEntity<ObjectNode>(objectNode,HttpStatus.OK);
         } catch (Exception e) {
-            objectNode.put("code",404);
-			objectNode.put("message","No Record found");
+            objectNode.put("code",500);
+			objectNode.put("message",e.getLocalizedMessage());
 			return new ResponseEntity<ObjectNode>(objectNode,HttpStatus.NOT_FOUND);
         }
     }

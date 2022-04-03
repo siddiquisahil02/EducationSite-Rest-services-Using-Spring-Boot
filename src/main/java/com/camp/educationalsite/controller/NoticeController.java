@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,18 +33,16 @@ public class NoticeController {
     @Autowired
     private CoursesService coursesService;
 
-    @Autowired
-    private ObjectMapper mapper;
-
-    @GetMapping("/{cID}")
+    @GetMapping("/public/{cID}")
     public List<Notice> getAllNoticeBycID(@PathVariable("cID") String cID){
         return this.service.getAllNotice(cID);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('FACULTY')")
     @PostMapping("/add")
     public ResponseEntity<ObjectNode> addNotice(@Valid @RequestBody Notice notice){
         Courses courses = this.coursesService.getACourse(notice.getcID());
-        ObjectNode node = mapper.createObjectNode();
+        ObjectNode node = new ObjectMapper().createObjectNode();
         if(courses!=null){
             this.service.add(notice);
             node.put("code",200);
@@ -55,11 +54,19 @@ public class NoticeController {
         return new ResponseEntity<ObjectNode>(node,HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public void deleteHandler(@PathVariable("id") int nID){
+    public ResponseEntity<?> deleteHandler(@PathVariable("id") int nID){
+        ObjectNode node = new ObjectMapper().createObjectNode();
         try {
             this.service.deletNotice(nID);
+            node.put("code",200);
+            node.put("message","Notice Deleted successfully.");
+            return new ResponseEntity<ObjectNode>(node,HttpStatus.OK);
         } catch (Exception e) {
+            node.put("code",404);
+            node.put("message","No Record Found");
+            return new ResponseEntity<ObjectNode>(node,HttpStatus.NOT_FOUND);
         }
     }    
 }

@@ -17,6 +17,14 @@ public class UsersService {
     public List<Users> getAllUsers(){
         return this.repo.findAll();
     }
+
+    public List<Users> getAllAdmins(){
+        return this.repo.findAllByrole("ADMIN");
+    }
+
+    public List<Users> getAllFaculty(){
+        return this.repo.findAllByrole("FACULTY");
+    }
     
     public Users getUser(String username){
         return this.repo.findById(username).orElse(null);
