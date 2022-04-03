@@ -1,7 +1,8 @@
 # EducationSite-Rest-services-Using-Spring-Boot
 
-[![Coverage Status](https://coveralls.io/repos/github/siddiquisahil02/EducationSite-Rest-services-Using-Spring-Boot/badge.svg?branch=main)](https://coveralls.io/github/siddiquisahil02/EducationSite-Rest-services-Using-Spring-Boot?branch=main)
-[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+![](https://img.shields.io/badge/Sahil-Siddiqui-red)
+![](https://img.shields.io/github/languages/top/siddiquisahil02/EducationSite-Rest-services-Using-Spring-Boot)
+![](https://img.shields.io/github/last-commit/siddiquisahil02/EducationSite-Rest-services-Using-Spring-Boot)
 
 Minimal [Spring Boot](http://projects.spring.io/spring-boot/) sample app.
 
