@@ -6,6 +6,10 @@
 
 Minimal [Spring Boot](http://projects.spring.io/spring-boot/) sample app.
 
+
+## API Endpoints
+
+[Click here](https://documenter.getpostman.com/view/16026763/UVysxFcL) to get all the API Endpoints.
 ## Requirements
 
 For building and running the application you need:
